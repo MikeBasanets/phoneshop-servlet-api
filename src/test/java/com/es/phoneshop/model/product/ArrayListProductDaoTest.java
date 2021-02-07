@@ -20,6 +20,7 @@ public class ArrayListProductDaoTest
     private static final int TEST_PRODUCT_STOCK = 100;
     private static final String TEST_PRODUCT_IMAGE_URL = "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg";
     private static final int PRODUCT_TO_BE_REPLACED_INDEX = 0;
+    private static final String BLANK_QUERY = "  ";
 
     private ArrayListProductDao productDao;
 
@@ -29,15 +30,20 @@ public class ArrayListProductDaoTest
     }
 
     @Test
-    public void shouldFindProducts() {
-        assertFalse(productDao.findProducts().isEmpty());
+    public void shouldFindProductsWithNullQuery() {
+        assertFalse(productDao.findProducts(null).isEmpty());
+    }
+
+    @Test
+    public void shouldFindProductsWithBlankQuery() {
+        assertFalse(productDao.findProducts(BLANK_QUERY).isEmpty());
     }
 
     @Test
     public void shouldDeleteSingleProduct() {
         int initialProductNumber = productDao.getProducts().size();
 
-        productDao.delete(productDao.findProducts().get(PRODUCT_TO_BE_REPLACED_INDEX).getId());
+        productDao.delete(productDao.findProducts(null).get(PRODUCT_TO_BE_REPLACED_INDEX).getId());
 
         assertTrue(productDao.getProducts().size() == initialProductNumber - 1);
     }
@@ -102,7 +108,7 @@ public class ArrayListProductDaoTest
 
     @Test
     public void shouldFindProductsWithoutStock() {
-        int findProductSizeBeforeTestProductAddition = productDao.findProducts().size();
+        int findProductSizeBeforeTestProductAddition = productDao.findProducts(null).size();
         Long maxId = productDao.getProducts()
                 .stream()
                 .map(product -> product.getId())
@@ -111,14 +117,14 @@ public class ArrayListProductDaoTest
         List<Product> products = productDao.getProducts();
         products.add(new Product(maxId, TEST_PRODUCT_CODE, TEST_PRODUCT_DESCRIPTION, TEST_PRODUCT_PRICE, TEST_PRODUCT_CURRENCY, 0, TEST_PRODUCT_IMAGE_URL));
         productDao.setProducts(products);
-        int findProductSizeAfterTestProductAddition = productDao.findProducts().size();
+        int findProductSizeAfterTestProductAddition = productDao.findProducts(null).size();
 
         assertTrue(findProductSizeBeforeTestProductAddition == findProductSizeAfterTestProductAddition);
     }
 
     @Test
     public void shouldFindProductsWithNullPrice() {
-        int findProductSizeBeforeTestProductAddition = productDao.findProducts().size();
+        int findProductSizeBeforeTestProductAddition = productDao.findProducts(null).size();
         Long maxId = productDao.getProducts()
                 .stream()
                 .map(product -> product.getId())
@@ -127,7 +133,7 @@ public class ArrayListProductDaoTest
         List<Product> products = productDao.getProducts();
         products.add(new Product(maxId, TEST_PRODUCT_CODE, TEST_PRODUCT_DESCRIPTION, null, TEST_PRODUCT_CURRENCY, TEST_PRODUCT_STOCK, TEST_PRODUCT_IMAGE_URL));
         productDao.setProducts(products);
-        int findProductSizeAfterTestProductAddition = productDao.findProducts().size();
+        int findProductSizeAfterTestProductAddition = productDao.findProducts(null).size();
 
         assertTrue(findProductSizeBeforeTestProductAddition == findProductSizeAfterTestProductAddition);
     }

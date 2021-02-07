@@ -2,8 +2,10 @@ package com.es.phoneshop.model.product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -56,12 +58,18 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts() {
+    public List<Product> findProducts(String query) {
         readLock.lock();
+        boolean queryIsEntered = (query != null && !query.isBlank());
+        Comparator<Product> comparator = Comparator.comparing(product -> {
+            return (Comparable) countEntries(product.getDescription(), query);
+        });
         List<Product> result = products
                 .stream()
+                .filter(product -> !queryIsEntered || countEntries(product.getDescription(), query) > 0)
                 .filter(product -> product.getPrice() != null)
                 .filter(product -> product.getStock() > 0)
+                .sorted(comparator.reversed())
                 .collect(Collectors.toList());
         readLock.unlock();
         return result;
@@ -115,5 +123,15 @@ public class ArrayListProductDao implements ProductDao {
         save(new Product("simc56", "Siemens C56", new BigDecimal(70), usd, 20, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C56.jpg"));
         save(new Product("simc61", "Siemens C61", new BigDecimal(80), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C61.jpg"));
         save(new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+    }
+
+    private long countEntries(String text, String keywords) {
+        if(text == null || keywords == null) {
+            return 0;
+        }
+        return Arrays.asList(keywords.split(" "))
+                .stream()
+                .filter(word -> text.toLowerCase().contains(word.toLowerCase()))
+                .count();
     }
 }
