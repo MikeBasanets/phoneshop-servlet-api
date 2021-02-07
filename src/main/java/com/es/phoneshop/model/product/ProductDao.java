@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ProductDao {
     Product getProduct(Long id) throws NoSuchProductException;
-    List<Product> findProducts(String query);
+    List<Product> findProducts(String query, SortField sortField, SortOrder sortOrder);
     void save(Product product);
     void delete(Long id);
 }
