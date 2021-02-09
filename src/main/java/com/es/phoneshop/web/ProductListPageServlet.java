@@ -2,6 +2,7 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.ProductSearchEngine;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
 
@@ -20,11 +21,13 @@ public class ProductListPageServlet extends HttpServlet {
     private static final String SORT_ORDER_PARAMETER_NAME = "order";
 
     private ProductDao productDao;
+    private ProductSearchEngine searchEngine;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         productDao = ArrayListProductDao.getInstance();
+        searchEngine = new ProductSearchEngine(productDao);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class ProductListPageServlet extends HttpServlet {
         }
         catch (IllegalArgumentException | NullPointerException exception) {
         }
-        request.setAttribute(ATTRIBUTE_NAME, productDao.findProducts(query, sortField, sortOrder));
+        request.setAttribute(ATTRIBUTE_NAME,  searchEngine.findProducts(query, sortField, sortOrder));
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }
 }

@@ -11,6 +11,8 @@
     </p>
     <form>
         <input name="query" value="${param.query}">
+        <input name="sort" type="hidden" value="${param.sort}">
+        <input name="order" type="hidden" value="${param.order}">
         <button>Search</button>
     </form>
     <table>
