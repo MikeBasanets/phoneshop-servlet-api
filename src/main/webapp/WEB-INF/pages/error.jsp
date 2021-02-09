@@ -4,6 +4,6 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <tags:master pageTitle="Error Occured">
-  <h1>Sorry, error occured</h1>
-  <tags:footer></tags:footer>
+    <h1>Sorry, error occured</h1>
+    <tags:footer></tags:footer>
 </tags:master>

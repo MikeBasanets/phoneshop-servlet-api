@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ProductListPageServlet extends HttpServlet {
+    private static final String ATTRIBUTE_NAME = "products";
+    private static final String PAGE_PATH = "/WEB-INF/pages/productList.jsp";
+    private static final String QUERY_PARAMETER_NAME = "query";
+    private static final String SORT_FIELD_PARAMETER_NAME = "sort";
+    private static final String SORT_ORDER_PARAMETER_NAME = "order";
+
     private ProductDao productDao;
 
     @Override
@@ -23,9 +29,9 @@ public class ProductListPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String query = request.getParameter("query");
-        String sortFieldInput = request.getParameter("sort");
-        String sortOrderInput = request.getParameter("order");
+        String query = request.getParameter(QUERY_PARAMETER_NAME);
+        String sortFieldInput = request.getParameter(SORT_FIELD_PARAMETER_NAME);
+        String sortOrderInput = request.getParameter(SORT_ORDER_PARAMETER_NAME);
         SortField sortField = null;
         SortOrder sortOrder = null;
         try {
@@ -38,7 +44,7 @@ public class ProductListPageServlet extends HttpServlet {
         }
         catch (IllegalArgumentException | NullPointerException exception) {
         }
-        request.setAttribute("products", productDao.findProducts(query, sortField, sortOrder));
-        request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
+        request.setAttribute(ATTRIBUTE_NAME, productDao.findProducts(query, sortField, sortOrder));
+        request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }
 }

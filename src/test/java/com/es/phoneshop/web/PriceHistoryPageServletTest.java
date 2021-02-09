@@ -23,9 +23,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductDetailsPageServletTest {
+public class PriceHistoryPageServletTest {
     private static final String REQUEST_ATTRIBUTE = "product";
-    private static final String PRODUCT_PAGE_RELATIVE_PATH = "/WEB-INF/pages/product.jsp";
+    private static final String PRODUCT_PAGE_RELATIVE_PATH = "/WEB-INF/pages/priceHistory.jsp";
     private static final String PRODUCT_PATH = "/1";
 
     @Mock
@@ -41,7 +41,7 @@ public class ProductDetailsPageServletTest {
     @Mock
     private ProductDao productDao;
 
-    private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
+    private PriceHistoryPageServlet servlet = new PriceHistoryPageServlet();
 
     @Before
     public void setup() throws ServletException {

@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ProductDetailsPageServlet extends HttpServlet {
+public class PriceHistoryPageServlet extends HttpServlet {
     private static final String ATTRIBUTE_NAME = "product";
-    private static final String PAGE_PATH = "/WEB-INF/pages/product.jsp";
+    private static final String PAGE_PATH = "/WEB-INF/pages/priceHistory.jsp";
 
     private ProductDao productDao;
 
