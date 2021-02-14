@@ -1,17 +1,18 @@
 package com.es.phoneshop.model.cart;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class DefaultCartService implements  CartService{
+    private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
+
     private static DefaultCartService instance;
 
-    private Cart cart = new Cart();
-    private ProductDao productDao;
-
     private DefaultCartService() {
-        productDao = ArrayListProductDao.getInstance();
     }
 
     public static DefaultCartService getInstance() {
@@ -22,16 +23,33 @@ public class DefaultCartService implements  CartService{
     }
 
     @Override
-    public Cart getCart() {
+    public synchronized Cart getCart(HttpServletRequest request) {
+        Cart cart = (Cart) request.getSession().getAttribute(CART_SESSION_ATTRIBUTE);
+        if(cart == null) {
+            request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, cart = new Cart());
+        }
         return cart;
     }
 
     @Override
-    public void add(Long productId, int quantity) throws NotEnoughStockException{
-        Product product = productDao.getProduct(productId);
-        if(product.getStock() < quantity) {
+    public synchronized void add(Cart cart, Product product, int quantity) throws NotEnoughStockException {
+        List<CartItem> cartItems = cart.getItems();
+        Optional<CartItem> cartItemInCart = cartItems
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(product.getId()))
+                .findAny();
+        int sumOfRequestedQuantities = quantity;
+        if (cartItemInCart.isPresent()) {
+            sumOfRequestedQuantities += cartItemInCart.get().getQuantity();
+        }
+        if (product.getStock() < sumOfRequestedQuantities) {
             throw new NotEnoughStockException(product, quantity, product.getStock());
         }
-        cart.getItems().add(new CartItem(product, quantity));
+        if (cartItemInCart.isPresent()) {
+            cartItemInCart.get().setQuantity(sumOfRequestedQuantities);
+        }
+        else {
+            cart.getItems().add(new CartItem(product, quantity));
+        }
     }
 }

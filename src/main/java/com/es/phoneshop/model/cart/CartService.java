@@ -1,6 +1,10 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.model.product.Product;
+
+import javax.servlet.http.HttpServletRequest;
+
 public interface CartService {
-    Cart getCart();
-    void add(Long productId, int quantity) throws NotEnoughStockException;
+    Cart getCart(HttpServletRequest request);
+    void add(Cart cart, Product product, int quantity) throws NotEnoughStockException;
 }

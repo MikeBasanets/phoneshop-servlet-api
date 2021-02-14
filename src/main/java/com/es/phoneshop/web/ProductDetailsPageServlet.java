@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private static final String PRODUCT_ATTRIBUTE_NAME = "product";
@@ -44,7 +46,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long productId = Long.valueOf(request.getPathInfo().substring(1));
         request.setAttribute(PRODUCT_ATTRIBUTE_NAME, productDao.getProduct(productId));
-        request.setAttribute(CART_ATTRIBUTE_NAME, cartService.getCart());
+        request.setAttribute(CART_ATTRIBUTE_NAME, cartService.getCart(request));
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }
 
@@ -54,9 +56,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
         String quantityString = request.getParameter(QUANTITY_PARAMETER_NAME);
         int quantity;
         try {
-            quantity = Integer.parseInt(quantityString);
+            quantity = NumberFormat.getInstance(request.getLocale()).parse(quantityString).intValue();
         }
-        catch (NumberFormatException exception) {
+        catch (ParseException exception) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBER_NOT_VALID_MESSAGE);
             doGet(request, response);
             return;
@@ -67,7 +69,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             return;
         }
         try {
-            cartService.add(productId, quantity);
+            cartService.add(cartService.getCart(request), productId, quantity);
         }
         catch (NotEnoughStockException exception) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, NOT_ENOUGH_STOCK_MESSAGE + exception.getStockAvailable());

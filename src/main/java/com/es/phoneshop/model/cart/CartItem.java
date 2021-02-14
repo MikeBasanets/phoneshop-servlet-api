@@ -19,8 +19,12 @@ public class CartItem {
         return quantity;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     @Override
     public String toString() {
-        return product.getCode() + ", " + quantity;
+        return "[" + product.getCode() + ", " + quantity + "]";
     }
 }
