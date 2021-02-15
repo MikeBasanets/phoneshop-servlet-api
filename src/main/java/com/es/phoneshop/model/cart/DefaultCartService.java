@@ -5,7 +5,6 @@ import com.es.phoneshop.model.product.Product;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 public class DefaultCartService implements  CartService{
     private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
@@ -49,7 +48,7 @@ public class DefaultCartService implements  CartService{
             cartItemInCart.get().setQuantity(sumOfRequestedQuantities);
         }
         else {
-            cart.getItems().add(new CartItem(product, quantity));
+            cartItems.add(new CartItem(product, quantity));
         }
     }
 }

@@ -5,6 +5,9 @@ import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.cart.NotEnoughStockException;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.recentlyviewed.DefaultRecentlyViewedProductsService;
+import com.es.phoneshop.model.recentlyviewed.RecentlyViewedProducts;
+import com.es.phoneshop.model.recentlyviewed.RecentlyViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -26,25 +29,35 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private static final String NUMBER_NOT_VALID_MESSAGE = "Not a valid product quantity";
     private static final String NOT_ENOUGH_STOCK_MESSAGE = "Not enough stock, available ";
     private static final String PAGE_PATH = "/WEB-INF/pages/product.jsp";
+    private static final String RECENTLY_VIEWED_ATTRIBUTE_NAME = "recentlyViewedProducts";
 
     private ProductDao productDao;
     private CartService cartService;
+    private RecentlyViewedProductsService recentlyViewedProductsService;
+
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         productDao = ArrayListProductDao.getInstance();
+        recentlyViewedProductsService = DefaultRecentlyViewedProductsService.getInstance();
         cartService = DefaultCartService.getInstance();
     }
 
-    public void init(ServletConfig config, ProductDao productDao) throws ServletException {
+    public void init(ServletConfig config, ProductDao productDao, CartService cartService,
+                     RecentlyViewedProductsService recentlyViewedProductsService) throws ServletException {
         super.init(config);
         this.productDao = productDao;
+        this.cartService = cartService;
+        this.recentlyViewedProductsService = recentlyViewedProductsService;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long productId = Long.valueOf(request.getPathInfo().substring(1));
+        RecentlyViewedProducts recentlyViewedProducts = recentlyViewedProductsService.getRecentlyViewedProducts(request);
+        recentlyViewedProductsService.addProduct(productId, recentlyViewedProducts);
+        request.setAttribute(RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
         request.setAttribute(PRODUCT_ATTRIBUTE_NAME, productDao.getProduct(productId));
         request.setAttribute(CART_ATTRIBUTE_NAME, cartService.getCart(request));
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
@@ -69,14 +82,13 @@ public class ProductDetailsPageServlet extends HttpServlet {
             return;
         }
         try {
-            cartService.add(cartService.getCart(request), productId, quantity);
+            cartService.add(cartService.getCart(request), productDao.getProduct(productId), quantity);
         }
         catch (NotEnoughStockException exception) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, NOT_ENOUGH_STOCK_MESSAGE + exception.getStockAvailable());
             doGet(request, response);
             return;
         }
-        request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBER_NOT_VALID_MESSAGE);
         response.sendRedirect(request.getContextPath() + SERVLET_RELATIVE_PATH_MAPPING + productId + "?" + REDIRECT_MESSAGE_PARAMETER_NAME + "=" + ADDED_TO_CART_MESSAGE);
     }
 }
