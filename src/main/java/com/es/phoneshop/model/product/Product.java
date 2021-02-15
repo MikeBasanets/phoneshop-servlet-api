@@ -2,11 +2,14 @@ package com.es.phoneshop.model.product;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Date;
+import java.util.TreeMap;
 
 public class Product {
     private Long id;
     private String code;
     private String description;
+    private TreeMap<Date, BigDecimal> priceHistory;
     /** null means there is no price because the product is outdated or new */
     private BigDecimal price;
     /** can be null if the price is null */
@@ -17,7 +20,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+    public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl, TreeMap<Date, BigDecimal> priceHistory) {
         this.id = id;
         this.code = code;
         this.description = description;
@@ -25,15 +28,17 @@ public class Product {
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
+        this.priceHistory = priceHistory;
     }
 
-    public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+    public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl, TreeMap<Date, BigDecimal> priceHistory) {
         this.code = code;
         this.description = description;
         this.price = price;
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
+        this.priceHistory = priceHistory;
     }
 
     public Long getId() {
@@ -90,5 +95,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public TreeMap<Date, BigDecimal> getPriceHistory() {
+        return priceHistory;
+    }
+
+    public void setPriceHistory(TreeMap<Date, BigDecimal> priceHistory) {
+        this.priceHistory = priceHistory;
     }
 }
