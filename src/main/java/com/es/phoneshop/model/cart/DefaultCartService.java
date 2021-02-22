@@ -33,10 +33,7 @@ public class DefaultCartService implements  CartService{
     @Override
     public synchronized void add(Cart cart, Product product, int quantity) throws NotEnoughStockException {
         List<CartItem> cartItems = cart.getItems();
-        Optional<CartItem> cartItemInCart = cartItems
-                .stream()
-                .filter(item -> item.getProduct().getId().equals(product.getId()))
-                .findAny();
+        Optional<CartItem> cartItemInCart = findCartItemToUpdate(cartItems, product);
         int sumOfRequestedQuantities = quantity;
         if (cartItemInCart.isPresent()) {
             sumOfRequestedQuantities += cartItemInCart.get().getQuantity();
@@ -50,5 +47,27 @@ public class DefaultCartService implements  CartService{
         else {
             cartItems.add(new CartItem(product, quantity));
         }
+    }
+
+    @Override
+    public synchronized void update(Cart cart, Product product, int quantity) throws NotEnoughStockException {
+        List<CartItem> cartItems = cart.getItems();
+        Optional<CartItem> cartItemInCart = findCartItemToUpdate(cartItems, product);
+        if (product.getStock() < quantity) {
+            throw new NotEnoughStockException(product, quantity, product.getStock());
+        }
+        if (cartItemInCart.isPresent()) {
+            cartItemInCart.get().setQuantity(quantity);
+        }
+        else {
+            cartItems.add(new CartItem(product, quantity));
+        }
+    }
+
+    Optional<CartItem> findCartItemToUpdate(List<CartItem> cartItems, Product product) {
+        return cartItems
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(product.getId()))
+                .findAny();
     }
 }
