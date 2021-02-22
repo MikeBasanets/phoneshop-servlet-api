@@ -5,5 +5,9 @@
 
 <tags:master pageTitle="Error Occured">
     <h1>Sorry, error occured</h1>
+    <br>
+    <br>
+    <br>
+    <br>
     <tags:footer></tags:footer>
 </tags:master>

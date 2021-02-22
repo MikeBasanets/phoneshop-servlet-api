@@ -1,6 +1,5 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,17 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletException;
-import java.io.IOException;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DemoDataServletContextListenerTest {
-    private static int MINIMUM_REQUIRED_PRODUCTS = 1;
-
     @Mock
     private ProductDao productDao;
     @Mock
@@ -28,14 +23,14 @@ public class DemoDataServletContextListenerTest {
     private DemoDataServletContextListener listener;
 
     @Before
-    public void setup() throws ServletException {
+    public void setup() {
         listener = new DemoDataServletContextListener(productDao);
     }
 
     @Test
-    public void shouldContextInitialised() throws ServletException, IOException {
+    public void shouldContextInitialised() {
         listener.contextInitialized(event);
 
-        verify(productDao, atLeast(MINIMUM_REQUIRED_PRODUCTS)).save(any(Product.class));
+        verify(productDao).setProducts(any(List.class));
     }
 }
