@@ -52,4 +52,14 @@ public class MiniCartServletTest {
 
         verify(requestDispatcher).include(request, response);
     }
+
+    @Test
+    public void shouldTestDoPost() throws ServletException, IOException {
+        when(cartService.getCart(any())).thenReturn(cart);
+        when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+
+        servlet.doPost(request, response);
+
+        verify(requestDispatcher).include(request, response);
+    }
 }
