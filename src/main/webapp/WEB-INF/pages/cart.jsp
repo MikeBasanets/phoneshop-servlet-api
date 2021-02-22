@@ -7,15 +7,15 @@
 <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
 <tags:master pageTitle="Cart">
     <c:if test="${not empty param.message}">
-        <c:if test="${empty error}">
+        <c:if test="${empty errors}">
             <div class="success">
                     ${param.message}
             </div>
         </c:if>
     </c:if>
-    <c:if test="${not empty error}">
+    <c:if test="${not empty errors}">
         <div class="error">
-            Error occurred while adding product to cart
+            Error occurred while updating cart
         </div>
     </c:if>
     <br>
@@ -32,6 +32,8 @@
                 </td>
                 <td class="price">
                     Price
+                </td>
+                <td>
                 </td>
             </tr>
             </thead>
@@ -62,11 +64,18 @@
                                 <fmt:formatNumber value="${item.product.price}" type="currency"
                                                   currencySymbol="${item.product.currency.symbol}"/>
                     </td>
+                    <td>
+                        <button form="deleteCartItem"formaction="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${item.product.id}">
+                            Delete
+                        </button>
+                    </td>
                 </tr>
             </c:forEach>
         </table>
         <button>Update</button>
     </form>
     <br>
+    <form id="deleteCartItem" method="post">
+    </form>
     <tags:footer></tags:footer>
 </tags:master>
