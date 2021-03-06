@@ -2,7 +2,7 @@ package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.model.product.Product;
 
-public class NotEnoughStockException extends Exception{
+public class NotEnoughStockException extends Exception {
     private Product product;
     private int stockRequested;
     private int stockAvailable;

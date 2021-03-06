@@ -59,7 +59,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
         recentlyViewedProductsService.addProduct(productId, recentlyViewedProducts);
         request.setAttribute(RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
         request.setAttribute(PRODUCT_ATTRIBUTE_NAME, productDao.getProduct(productId));
-        request.setAttribute(CART_ATTRIBUTE_NAME, cartService.getCart(request));
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }
 

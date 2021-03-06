@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -16,12 +17,16 @@ import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultCartServiceTest {
-    private static final int PRODUCT_QUANTITY = 1;
+    private static int PRODUCT_QUANTITY = 1;
+    private static BigDecimal PRODUCT_PRICE = new BigDecimal(1);
+    private static List<CartItem> RECENT_PRODUCTS_LIST = new ArrayList<>();
+    private static Long PRODUCT_ID = 1L;
 
     private DefaultCartService defaultCartService;
 
@@ -33,6 +38,8 @@ public class DefaultCartServiceTest {
     private Cart cart;
     @Mock
     private Product product;
+    @Mock
+    private CartItem cartItem;
 
     @Before
     public void setup() {
@@ -55,6 +62,7 @@ public class DefaultCartServiceTest {
         List<CartItem> cartItemList = new ArrayList<>();
         when(cart.getItems()).thenReturn(cartItemList);
         when(product.getStock()).thenReturn(PRODUCT_QUANTITY);
+        when(product.getPrice()).thenReturn(PRODUCT_PRICE);
 
         defaultCartService.add(cart, product, PRODUCT_QUANTITY);
 
@@ -68,4 +76,30 @@ public class DefaultCartServiceTest {
 
         defaultCartService.add(cart, product, PRODUCT_QUANTITY);
     }
+
+    @Test
+    public void shouldTestUpdate() throws NotEnoughStockException {
+        List<CartItem> cartItemList = new ArrayList<>();
+        when(cart.getItems()).thenReturn(cartItemList);
+        when(product.getStock()).thenReturn(PRODUCT_QUANTITY);
+        when(product.getPrice()).thenReturn(PRODUCT_PRICE);
+
+        defaultCartService.update(cart, product, PRODUCT_QUANTITY);
+
+        assertFalse(cartItemList.isEmpty());
+    }
+
+    @Test
+    public void shouldTestDelete() throws NotEnoughStockException {
+        List<CartItem> cartItemList = new ArrayList<>();
+        cartItemList.add(cartItem);
+        when(cart.getItems()).thenReturn(cartItemList);
+        when(cartItem.getProduct()).thenReturn(product);
+        when(product.getId()).thenReturn(PRODUCT_ID);
+
+        defaultCartService.delete(cart, product);
+
+        assertTrue(cartItemList.isEmpty());
+    }
+
 }
