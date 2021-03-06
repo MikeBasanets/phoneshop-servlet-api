@@ -98,5 +98,8 @@
   <br>
   <form id="deleteCartItem" method="post">
   </form>
+  <form action="${pageContext.servletContext.contextPath}/checkout">
+    <button>Checkout</button>
+  </form>
   <tags:footer></tags:footer>
 </tags:master>

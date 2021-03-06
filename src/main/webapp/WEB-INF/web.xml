@@ -74,6 +74,16 @@
     <url-pattern>/cart/minicart</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>checkout</servlet-name>
+    <servlet-class>com.es.phoneshop.web.CheckoutPageServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>checkout</servlet-name>
+    <url-pattern>/checkout</url-pattern>
+  </servlet-mapping>
+
   <error-page>
     <location>/WEB-INF/pages/productNotFound.jsp</location>
     <exception-type>com.es.phoneshop.model.product.NoSuchProductException</exception-type>
@@ -88,5 +98,5 @@
     <location>/WEB-INF/pages/pageNotFound.jsp</location>
     <error-code>404</error-code>
   </error-page>
-  
+
 </web-app>
