@@ -1,6 +1,5 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,8 +36,6 @@ public class CartPageServletTest {
     private ProductDao productDao;
     @Mock
     private CartService cartService;
-    @Mock
-    private Cart cart;
 
     private CartPageServlet servlet = new CartPageServlet();
 
