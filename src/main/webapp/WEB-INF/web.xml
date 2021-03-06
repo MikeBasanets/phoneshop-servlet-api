@@ -84,4 +84,9 @@
     <error-code>500</error-code>
   </error-page>
 
+  <error-page>
+    <location>/WEB-INF/pages/pageNotFound.jsp</location>
+    <error-code>404</error-code>
+  </error-page>
+  
 </web-app>
