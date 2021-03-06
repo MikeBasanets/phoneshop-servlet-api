@@ -13,16 +13,15 @@ public class DefaultCartService implements  CartService {
     private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
     private static final Currency DEFAULT_CURRENCY = Currency.getInstance(Locale.US);
 
-    private static DefaultCartService instance;
+    private static class SingletonHolder {
+        private static final DefaultCartService INSTANCE = new DefaultCartService();
+    }
 
     private DefaultCartService() {
     }
 
     public static DefaultCartService getInstance() {
-        if(instance == null) {
-            instance = new DefaultCartService();
-        }
-        return instance;
+        return SingletonHolder.INSTANCE;
     }
 
     @Override

@@ -11,22 +11,21 @@ public class ArrayListProductDao implements ProductDao {
     private static final String NULL_PASSED_EXCEPTION_MESSAGE = "Null passed as parameter instead of Product";
     private static final String NONEXISTENT_ID_EXCEPTION_MESSAGE = "Product with such Id not found";
 
-    private static ArrayListProductDao instance;
-
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private Lock readLock = readWriteLock.readLock();
     private Lock writeLock = readWriteLock.writeLock();
     private long maxId = 0L;
     private List<Product> products = new ArrayList<>();
 
+    private static class SingletonHolder {
+        private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
+    }
+
     private ArrayListProductDao() {
     }
 
     public static ArrayListProductDao getInstance() {
-        if(instance == null) {
-            instance = new ArrayListProductDao();
-        }
-        return instance;
+        return SingletonHolder.INSTANCE;
     }
 
     @Override
