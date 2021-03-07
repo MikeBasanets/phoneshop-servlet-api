@@ -2,6 +2,8 @@ package com.es.phoneshop.model.order;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
+import com.es.phoneshop.model.cart.NotEnoughStockException;
+import com.es.phoneshop.model.product.ProductDao;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -52,5 +54,11 @@ public class DefaultOrderService implements OrderService {
     @Override
     public List<PaymentMethod> getPaymentMethods() {
         return Arrays.asList(PaymentMethod.values());
+    }
+
+    @Override
+    public void placeOrder(Order order, ProductDao productDao, OrderDao orderDao) throws NotEnoughStockException {
+        productDao.trySubtractProducts(order.getItems());
+        orderDao.save(order);
     }
 }

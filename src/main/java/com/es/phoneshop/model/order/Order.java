@@ -15,6 +15,8 @@ public class Order extends Cart {
     private String deliveryAddress;
     private LocalDate deliveryDate;
     private PaymentMethod paymentMethod;
+    private Long id;
+    private String secureId;
 
     public Order(Currency currency) {
         super(currency);
@@ -82,5 +84,21 @@ public class Order extends Cart {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSecureId() {
+        return secureId;
+    }
+
+    public void setSecureId(String secureId) {
+        this.secureId = secureId;
     }
 }

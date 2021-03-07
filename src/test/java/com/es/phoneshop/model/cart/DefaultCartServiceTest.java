@@ -89,7 +89,7 @@ public class DefaultCartServiceTest {
     }
 
     @Test
-    public void shouldTestDelete() throws NotEnoughStockException {
+    public void shouldTestDelete() {
         List<CartItem> cartItemList = new ArrayList<>();
         cartItemList.add(cartItem);
         when(cart.getItems()).thenReturn(cartItemList);
@@ -101,4 +101,14 @@ public class DefaultCartServiceTest {
         assertTrue(cartItemList.isEmpty());
     }
 
+    @Test
+    public void shouldTestClear() {
+        List<CartItem> cartItemList = new ArrayList<>();
+        cartItemList.add(cartItem);
+        when(cart.getItems()).thenReturn(cartItemList);
+
+        defaultCartService.clear(cart);
+
+        assertTrue(cartItemList.isEmpty());
+    }
 }

@@ -87,6 +87,14 @@ public class DefaultCartService implements  CartService {
         }
     }
 
+    @Override
+    public void clear(Cart cart) {
+        synchronized (cart) {
+            cart.getItems().clear();
+            recalculateCart(cart);
+        }
+    }
+
     private Optional<CartItem> findCartItemToUpdate(List<CartItem> cartItems, Product product) {
         return cartItems
                 .stream()

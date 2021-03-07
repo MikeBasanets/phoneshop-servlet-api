@@ -6,6 +6,19 @@
 
 <jsp:useBean id="order" type="com.es.phoneshop.model.order.Order" scope="request"/>
 <tags:master pageTitle="Checkout">
+  <br>
+  <c:if test="${not empty errors['notEnoughStock']}">
+    <div class="error">
+        ${errors['notEnoughStock']}
+      <br><br>
+    </div>
+  </c:if>
+  <c:if test="${not empty errors['emptyOrder']}">
+    <div class="error">
+        ${errors['emptyOrder']}
+      <br><br>
+    </div>
+  </c:if>
   <form method="post">
     <table>
       <thead>

@@ -1,5 +1,8 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.cart.CartItem;
+import com.es.phoneshop.model.cart.NotEnoughStockException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -94,5 +97,24 @@ public class ArrayListProductDao implements ProductDao {
             products.removeIf(product -> id.equals(product.getId()));
         }
         writeLock.unlock();
+    }
+
+    @Override
+    public void trySubtractProducts(List<CartItem> items) throws NotEnoughStockException {
+        writeLock.lock();
+        try {
+            for(CartItem item : items) {
+                if(item.getProduct().getStock() < item.getQuantity()) {
+                    throw new NotEnoughStockException(item.getProduct(), item.getQuantity(), item.getProduct().getStock());
+                }
+            }
+            items.forEach(item -> {
+                item.getProduct().setStock(item.getProduct().getStock() - item.getQuantity());
+            });
+        }
+        finally {
+
+            writeLock.unlock();
+        }
     }
 }
