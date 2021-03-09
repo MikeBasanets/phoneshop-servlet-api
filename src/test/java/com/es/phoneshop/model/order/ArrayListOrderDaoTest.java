@@ -24,6 +24,8 @@ public class ArrayListOrderDaoTest
     public void setup() {
         orderDao = ArrayListOrderDao.getInstance();
         order = new Order(TEST_CURRENCY);
+        order.setId(ID);
+        order.setSecureId(SECURE_ID);
     }
 
     @Test
@@ -36,7 +38,6 @@ public class ArrayListOrderDaoTest
 
     @Test
     public void shouldTestGetById() {
-        order.setId(ID);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
         orderDao.setOrders(orderList);
@@ -46,7 +47,6 @@ public class ArrayListOrderDaoTest
 
     @Test
     public void shouldTestGetBySecureId() {
-        order.setSecureId(SECURE_ID);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
         orderDao.setOrders(orderList);

@@ -30,12 +30,11 @@ public class DosFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         }
         else {
-            ((HttpServletResponse) servletResponse).setStatus(429);
+            ((HttpServletResponse) servletResponse).setStatus(ServletConstants.TOO_MANY_REQUESTS_CODE);
         }
     }
 
     @Override
     public void destroy() {
-
     }
 }

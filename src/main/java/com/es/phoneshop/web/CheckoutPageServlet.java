@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -36,16 +37,16 @@ public class CheckoutPageServlet extends HttpServlet {
     private static final String DELIVERY_ADDRESS_PARAMETER_NAME = "deliveryAddress";
     private static final String DELIVERY_DATE_PARAMETER_NAME = "deliveryDate";
     private static final String PAYMENT_METHOD_PARAMETER_NAME = "paymentMethod";
-    private static final String PAYMENT_METHODS_LIST_ATTRIBUTE = "paymentMethods";
-    private static final String ERRORS_ATTRIBUTE = "errors";
-    private static final String ORDER_ATTRIBUTE = "order";
+    private static final String PAYMENT_METHODS_LIST_ATTRIBUTE_NAME = "paymentMethods";
+    private static final String ERRORS_ATTRIBUTE_NAME = "errors";
     private static final String NO_VALUE_ENTERED_ERROR_MESSAGE = "Please enter value";
     private static final String WRONG_DATE_FORMAT_ERROR_MESSAGE = "Please enter date in yyyy-mm-dd format";
     private static final String NON_FUTURE_DATE_ERROR_MESSAGE = "Please enter future date";
     private static final String NOT_ENOUGH_STOCK_ERROR_KEY = "notEnoughStock";
     private static final String EMPTY_ORDER_ERROR_KEY = "emptyOrder";
     private static final String EMPTY_ORDER_ERROR_MESSAGE = "Your order is empty, please add something to cart before placing it";
-
+    private static final MessageFormat NOT_ENOUGH_STOCK_ERROR_MESSAGE = new MessageFormat(
+            "Not enough stock: {0} items of {1} requested, {2} available");
 
     private CartService cartService;
     private OrderService orderService;
@@ -77,7 +78,7 @@ public class CheckoutPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cart cart = cartService.getCart(request);
         request.setAttribute(ORDER_ATTRIBUTE_NAME, orderService.getOrder(cart));
-        request.setAttribute(PAYMENT_METHODS_LIST_ATTRIBUTE, orderService.getPaymentMethods());
+        request.setAttribute(PAYMENT_METHODS_LIST_ATTRIBUTE_NAME, orderService.getPaymentMethods());
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }
 
@@ -100,9 +101,9 @@ public class CheckoutPageServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + ORDER_OVERVIEW_PAGES + order.getSecureId());
         }
         else {
-            request.setAttribute(ERRORS_ATTRIBUTE, errors);
-            request.setAttribute(ORDER_ATTRIBUTE, order);
-            request.setAttribute(PAYMENT_METHODS_LIST_ATTRIBUTE, orderService.getPaymentMethods());
+            request.setAttribute(ERRORS_ATTRIBUTE_NAME, errors);
+            request.setAttribute(ORDER_ATTRIBUTE_NAME, order);
+            request.setAttribute(PAYMENT_METHODS_LIST_ATTRIBUTE_NAME, orderService.getPaymentMethods());
             request.getRequestDispatcher(PAGE_PATH).forward(request, response);
         }
 
@@ -160,13 +161,11 @@ public class CheckoutPageServlet extends HttpServlet {
         catch (NotEnoughStockException exception) {
             errors.put(
                     NOT_ENOUGH_STOCK_ERROR_KEY,
-                    "Not enough stock: " +
-                            exception.getStockRequested() +
-                            " items of " +
-                            exception.getProduct().getDescription() +
-                            " requested, " +
-                            exception.getStockAvailable() +
-                            " available"
+                    NOT_ENOUGH_STOCK_ERROR_MESSAGE.format(new Object[] {
+                            exception.getStockRequested(),
+                            exception.getProduct().getDescription(),
+                            exception.getStockAvailable()
+                    })
             );
         }
     }

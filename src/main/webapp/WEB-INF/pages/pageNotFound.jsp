@@ -5,9 +5,5 @@
 
 <tags:master pageTitle="Page Not Found">
   <h1>Page not found</h1>
-  <br>
-  <br>
-  <br>
-  <br>
   <tags:footer></tags:footer>
 </tags:master>

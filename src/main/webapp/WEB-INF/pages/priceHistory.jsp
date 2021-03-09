@@ -34,6 +34,5 @@
   </c:choose>
   <br>
   <tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}"/>
-  <br>
   <tags:footer></tags:footer>
 </tags:master>

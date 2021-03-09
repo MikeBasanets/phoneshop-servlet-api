@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultOrderServiceTest {
     private static final Currency TEST_CURRENCY = Currency.getInstance(Locale.US);
-    private static final List<CartItem> cartItemList = new ArrayList<>();
+    private static final List<CartItem> CART_ITEM_LIST = new ArrayList<>();
 
     private DefaultOrderService defaultOrderService;
 
@@ -49,11 +49,11 @@ public class DefaultOrderServiceTest {
 
     @Test
     public void shouldTestPlaceOrder() throws NotEnoughStockException {
-        when(order.getItems()).thenReturn(cartItemList);
+        when(order.getItems()).thenReturn(CART_ITEM_LIST);
 
         defaultOrderService.placeOrder(order, productDao, orderDao);
 
-        verify(productDao).trySubtractProducts(cartItemList);
+        verify(productDao).trySubtractProducts(CART_ITEM_LIST);
         verify(orderDao).save(order);
 
     }

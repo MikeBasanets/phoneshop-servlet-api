@@ -1,8 +1,6 @@
 package com.es.phoneshop.model.order;
 
-import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.model.product.NoSuchProductException;
-import com.es.phoneshop.model.product.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +44,7 @@ public class ArrayListOrderDao implements OrderDao {
         writeLock.lock();
         this.orders = new ArrayList<>(orders);
         maxId = 0L;
+        orders.forEach(order -> maxId = Math.max(maxId, order.getId()));
         writeLock.unlock();
     }
 

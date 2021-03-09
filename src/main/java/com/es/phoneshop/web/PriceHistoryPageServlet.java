@@ -16,7 +16,6 @@ import java.io.IOException;
 public class PriceHistoryPageServlet extends HttpServlet {
     private static final String ATTRIBUTE_NAME = "product";
     private static final String PAGE_PATH = "/WEB-INF/pages/priceHistory.jsp";
-    private static final String RECENTLY_VIEWED_ATTRIBUTE_NAME = "recentlyViewedProducts";
 
     private RecentlyViewedProductsService recentlyViewedProductsService = DefaultRecentlyViewedProductsService.getInstance();
     private ProductDao productDao;
@@ -44,6 +43,6 @@ public class PriceHistoryPageServlet extends HttpServlet {
 
     private void addRecentProducts(HttpServletRequest request) {
         RecentlyViewedProducts recentlyViewedProducts = recentlyViewedProductsService.getRecentlyViewedProducts(request);
-        request.setAttribute(RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
+        request.setAttribute(ServletConstants.RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
     }
 }

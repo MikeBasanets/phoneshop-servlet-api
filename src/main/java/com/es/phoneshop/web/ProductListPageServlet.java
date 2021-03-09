@@ -29,7 +29,6 @@ public class ProductListPageServlet extends HttpServlet {
     private static final String QUERY_PARAMETER_NAME = "query";
     private static final String SORT_FIELD_PARAMETER_NAME = "sort";
     private static final String SORT_ORDER_PARAMETER_NAME = "order";
-    private static final String RECENTLY_VIEWED_ATTRIBUTE_NAME = "recentlyViewedProducts";
     private static final String ERROR_ATTRIBUTE_NAME = "errors";
     private static final String NUMBER_NOT_VALID_MESSAGE = "Not a valid product quantity";
     private static final String NOT_ENOUGH_STOCK_MESSAGE = "Not enough stock, available ";
@@ -122,6 +121,6 @@ public class ProductListPageServlet extends HttpServlet {
 
     private void addRecentProducts(HttpServletRequest request) {
         RecentlyViewedProducts recentlyViewedProducts = recentlyViewedProductsService.getRecentlyViewedProducts(request);
-        request.setAttribute(RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
+        request.setAttribute(ServletConstants.RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
     }
 }

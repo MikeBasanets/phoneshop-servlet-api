@@ -1,6 +1,5 @@
 package com.es.phoneshop.model.recentlyviewed;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 
 import javax.servlet.http.HttpServletRequest;

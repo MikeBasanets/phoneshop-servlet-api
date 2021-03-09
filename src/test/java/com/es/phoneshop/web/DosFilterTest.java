@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DosFilterTest {
     private static final String REMOTE_ADDR = "";
-    private static final int TOO_MANY_REQUESTS_CODE = 429;
 
     @Mock
     private ServletRequest request;
@@ -57,6 +56,6 @@ public class DosFilterTest {
 
         filter.doFilter(request, response, filterChain);
 
-        verify(response).setStatus(TOO_MANY_REQUESTS_CODE);
+        verify(response).setStatus(ServletConstants.TOO_MANY_REQUESTS_CODE);
     }
 }

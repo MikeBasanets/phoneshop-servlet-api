@@ -1,23 +1,31 @@
 package com.es.phoneshop.model.security;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultDosProtectionService implements DosProtectionService {
-    private static final Duration DURATION = Duration.ofSeconds(60);
+    private static final Long CLEAR_TASK_CYCLE_DURATION_MILLISECONDS = 60000L;
+    private static final Long CLEAR_TASK_START_DELAY_MILLISECONDS = 0L;
     private static final long MAX_REQUESTS_DURING_DURATION = 20;
 
-    private Map<String, List<LocalTime>> requestTimeLists = new ConcurrentHashMap();
+    private Map<String, Integer> requestQuantities = new ConcurrentHashMap();
 
     private static class SingletonHolder {
         private static final DefaultDosProtectionService INSTANCE = new DefaultDosProtectionService();
     }
 
     private DefaultDosProtectionService() {
+        TimerTask cycleTask = new TimerTask() {
+            @Override
+            public void run() {
+                requestQuantities.clear();
+            }
+        };
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(cycleTask, CLEAR_TASK_START_DELAY_MILLISECONDS, CLEAR_TASK_CYCLE_DURATION_MILLISECONDS);
     }
 
     public static DefaultDosProtectionService getInstance() {
@@ -26,19 +34,14 @@ public class DefaultDosProtectionService implements DosProtectionService {
 
     @Override
     public boolean isAllowed(String ip) {
-        List<LocalTime> times = requestTimeLists.get(ip);
-        if(times == null) {
-            times = new LinkedList<>();
-            requestTimeLists.put(ip, times);
+        Integer quantity = requestQuantities.get(ip);
+        if(quantity == null) {
+            quantity = 0;
         }
-        synchronized (times) {
-            times.add(LocalTime.now());
-            if(times.size() > MAX_REQUESTS_DURING_DURATION  + 1) {
-                times.remove(0);
-            }
-            if(times.size() == MAX_REQUESTS_DURING_DURATION + 1 && times.get(0).plus(DURATION).isAfter(LocalTime.now())) {
-                return false;
-            }
+        quantity += 1;
+        requestQuantities.put(ip, quantity);
+        if(quantity > MAX_REQUESTS_DURING_DURATION) {
+            return false;
         }
         return true;
     }

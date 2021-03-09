@@ -42,9 +42,7 @@ public class DefaultCartService implements  CartService {
             if (cartItemInCart.isPresent()) {
                 sumOfRequestedQuantities += cartItemInCart.get().getQuantity();
             }
-            if (product.getStock() < sumOfRequestedQuantities) {
-                throw new NotEnoughStockException(product, quantity, product.getStock());
-            }
+            verifyEnoughStock(product, quantity);
             if (cartItemInCart.isPresent()) {
                 cartItemInCart.get().setQuantity(sumOfRequestedQuantities);
             }
@@ -64,9 +62,7 @@ public class DefaultCartService implements  CartService {
                 return;
             }
             Optional<CartItem> cartItemInCart = findCartItemToUpdate(cartItems, product);
-            if (product.getStock() < quantity) {
-                throw new NotEnoughStockException(product, quantity, product.getStock());
-            }
+            verifyEnoughStock(product, quantity);
             if (cartItemInCart.isPresent()) {
                 cartItemInCart.get().setQuantity(quantity);
             }
@@ -92,6 +88,12 @@ public class DefaultCartService implements  CartService {
         synchronized (cart) {
             cart.getItems().clear();
             recalculateCart(cart);
+        }
+    }
+
+    private void verifyEnoughStock(Product product, int requestedQuantity) throws NotEnoughStockException {
+        if (product.getStock() < requestedQuantity) {
+            throw new NotEnoughStockException(product, requestedQuantity, product.getStock());
         }
     }
 

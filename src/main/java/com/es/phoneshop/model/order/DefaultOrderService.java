@@ -32,19 +32,24 @@ public class DefaultOrderService implements OrderService {
     @Override
     public Order getOrder(Cart cart) {
         Order order = new Order(DEFAULT_CURRENCY);
-        order.setItems(cart.getItems().stream().map(item -> {
-            try {
-                return (CartItem) item.clone();
-            }
-            catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList()));
+        order.setItems(cart.getItems()
+                .stream()
+                .map(item -> cloneCartItem(item))
+                .collect(Collectors.toList()));
         order.setTotalQuantity(cart.getTotalQuantity());
         order.setSubtotal(cart.getTotalCost());
         order.setDeliveryCost(calculateDeliveryCost());
         order.setTotalCost(order.getSubtotal().add(order.getDeliveryCost()));
         return order;
+    }
+
+    private CartItem cloneCartItem(CartItem item) {
+        try {
+            return (CartItem) item.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private BigDecimal calculateDeliveryCost() {

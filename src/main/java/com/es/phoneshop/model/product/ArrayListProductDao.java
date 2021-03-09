@@ -103,17 +103,25 @@ public class ArrayListProductDao implements ProductDao {
     public void trySubtractProducts(List<CartItem> items) throws NotEnoughStockException {
         writeLock.lock();
         try {
-            for(CartItem item : items) {
-                if(item.getProduct().getStock() < item.getQuantity()) {
-                    throw new NotEnoughStockException(item.getProduct(), item.getQuantity(), item.getProduct().getStock());
+            for(CartItem cartItem : items) {
+                Product product;
+                try {
+                    product = getProduct(cartItem.getProduct().getId());
+                }
+                catch (NoSuchProductException exception) {
+                    throw new NotEnoughStockException(cartItem.getProduct(), cartItem.getQuantity(), 0);
+                }
+                if(product.getStock() < cartItem.getQuantity()) {
+                    throw new NotEnoughStockException(cartItem.getProduct(), cartItem.getQuantity(), product.getStock());
                 }
             }
-            items.forEach(item -> {
-                item.getProduct().setStock(item.getProduct().getStock() - item.getQuantity());
+            items.forEach(cartItem -> {
+                Product product = getProduct(cartItem.getProduct().getId());
+                product.setStock(product.getStock() - cartItem.getQuantity());
+                save(product);
             });
         }
         finally {
-
             writeLock.unlock();
         }
     }

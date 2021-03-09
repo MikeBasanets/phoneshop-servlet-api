@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class OrderOverviewPageServlet extends HttpServlet {
     private static final String PAGE_PATH = "/WEB-INF/pages/orderOverview.jsp";
-    private static final String ORDER_ATTRIBUTE = "order";
+    private static final String ORDER_ATTRIBUTE_NAME = "order";
 
     private OrderDao orderDao;
 
@@ -31,7 +31,7 @@ public class OrderOverviewPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String secureId = request.getPathInfo().substring(1);
-        request.setAttribute(ORDER_ATTRIBUTE, orderDao.getOrderBySecureId(secureId));
+        request.setAttribute(ORDER_ATTRIBUTE_NAME, orderDao.getOrderBySecureId(secureId));
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }
 }

@@ -20,7 +20,6 @@ import java.text.ParseException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private static final String PRODUCT_ATTRIBUTE_NAME = "product";
-    private static final String CART_ATTRIBUTE_NAME = "cart";
     private static final String ERROR_ATTRIBUTE_NAME = "error";
     private static final String SERVLET_RELATIVE_PATH_MAPPING = "/products/";
     private static final String QUANTITY_PARAMETER_NAME = "quantity";
@@ -29,7 +28,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private static final String NUMBER_NOT_VALID_MESSAGE = "Not a valid product quantity";
     private static final String NOT_ENOUGH_STOCK_MESSAGE = "Not enough stock, available ";
     private static final String PAGE_PATH = "/WEB-INF/pages/product.jsp";
-    private static final String RECENTLY_VIEWED_ATTRIBUTE_NAME = "recentlyViewedProducts";
 
     private ProductDao productDao;
     private CartService cartService;
@@ -57,7 +55,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         Long productId = Long.valueOf(request.getPathInfo().substring(1));
         RecentlyViewedProducts recentlyViewedProducts = recentlyViewedProductsService.getRecentlyViewedProducts(request);
         recentlyViewedProductsService.addProduct(productDao.getProduct(productId), recentlyViewedProducts);
-        request.setAttribute(RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
+        request.setAttribute(ServletConstants.RECENTLY_VIEWED_ATTRIBUTE_NAME, recentlyViewedProducts.getItems());
         request.setAttribute(PRODUCT_ATTRIBUTE_NAME, productDao.getProduct(productId));
         request.getRequestDispatcher(PAGE_PATH).forward(request, response);
     }

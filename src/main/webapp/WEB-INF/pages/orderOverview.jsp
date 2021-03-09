@@ -98,4 +98,5 @@
       </td>
     </tr>
   </table>
+  <tags:footer></tags:footer>
 </tags:master>
