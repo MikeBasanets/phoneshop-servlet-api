@@ -13,16 +13,15 @@ public class DefaultCartService implements  CartService {
     private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
     private static final Currency DEFAULT_CURRENCY = Currency.getInstance(Locale.US);
 
-    private static DefaultCartService instance;
+    private static class SingletonHolder {
+        private static final DefaultCartService INSTANCE = new DefaultCartService();
+    }
 
     private DefaultCartService() {
     }
 
     public static DefaultCartService getInstance() {
-        if(instance == null) {
-            instance = new DefaultCartService();
-        }
-        return instance;
+        return SingletonHolder.INSTANCE;
     }
 
     @Override
@@ -43,9 +42,7 @@ public class DefaultCartService implements  CartService {
             if (cartItemInCart.isPresent()) {
                 sumOfRequestedQuantities += cartItemInCart.get().getQuantity();
             }
-            if (product.getStock() < sumOfRequestedQuantities) {
-                throw new NotEnoughStockException(product, quantity, product.getStock());
-            }
+            verifyEnoughStock(product, quantity);
             if (cartItemInCart.isPresent()) {
                 cartItemInCart.get().setQuantity(sumOfRequestedQuantities);
             }
@@ -65,9 +62,7 @@ public class DefaultCartService implements  CartService {
                 return;
             }
             Optional<CartItem> cartItemInCart = findCartItemToUpdate(cartItems, product);
-            if (product.getStock() < quantity) {
-                throw new NotEnoughStockException(product, quantity, product.getStock());
-            }
+            verifyEnoughStock(product, quantity);
             if (cartItemInCart.isPresent()) {
                 cartItemInCart.get().setQuantity(quantity);
             }
@@ -85,6 +80,20 @@ public class DefaultCartService implements  CartService {
                     item.getProduct().getId().equals(product.getId())
             );
             recalculateCart(cart);
+        }
+    }
+
+    @Override
+    public void clear(Cart cart) {
+        synchronized (cart) {
+            cart.getItems().clear();
+            recalculateCart(cart);
+        }
+    }
+
+    private void verifyEnoughStock(Product product, int requestedQuantity) throws NotEnoughStockException {
+        if (product.getStock() < requestedQuantity) {
+            throw new NotEnoughStockException(product, requestedQuantity, product.getStock());
         }
     }
 

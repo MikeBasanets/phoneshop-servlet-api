@@ -1,3 +1,6 @@
-<p>
-  (c) Expert Soft
-</p>
+<footer>
+  <p>
+    <br>
+    (c) Expert Soft
+  </p>
+</footer>

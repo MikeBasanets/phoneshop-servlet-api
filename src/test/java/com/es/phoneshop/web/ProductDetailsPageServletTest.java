@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProductDetailsPageServletTest {
-    private static final String REQUEST_ATTRIBUTE = "product";
+    private static final String REQUEST_ATTRIBUTE_NAME = "product";
     private static final String PRODUCT_PAGE_RELATIVE_PATH = "/WEB-INF/pages/product.jsp";
     private static final String PRODUCT_PATH = "/1";
     private static final String QUANTITY_PARAMETER_NAME = "quantity";
@@ -80,7 +80,7 @@ public class ProductDetailsPageServletTest {
 
         verify(request).setAttribute(anyString(), any(Product.class));
         verify(request).setAttribute(anyString(), any(List.class));
-        verify(request).setAttribute(eq(REQUEST_ATTRIBUTE), any());
+        verify(request).setAttribute(eq(REQUEST_ATTRIBUTE_NAME), any());
         verify(request).getRequestDispatcher(eq(PRODUCT_PAGE_RELATIVE_PATH));
         verify(requestDispatcher).forward(request, response);
     }

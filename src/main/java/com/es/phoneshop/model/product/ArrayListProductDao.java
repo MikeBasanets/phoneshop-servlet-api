@@ -1,5 +1,8 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.cart.CartItem;
+import com.es.phoneshop.model.cart.NotEnoughStockException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -11,22 +14,21 @@ public class ArrayListProductDao implements ProductDao {
     private static final String NULL_PASSED_EXCEPTION_MESSAGE = "Null passed as parameter instead of Product";
     private static final String NONEXISTENT_ID_EXCEPTION_MESSAGE = "Product with such Id not found";
 
-    private static ArrayListProductDao instance;
-
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private Lock readLock = readWriteLock.readLock();
     private Lock writeLock = readWriteLock.writeLock();
     private long maxId = 0L;
     private List<Product> products = new ArrayList<>();
 
+    private static class SingletonHolder {
+        private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
+    }
+
     private ArrayListProductDao() {
     }
 
     public static ArrayListProductDao getInstance() {
-        if(instance == null) {
-            instance = new ArrayListProductDao();
-        }
-        return instance;
+        return SingletonHolder.INSTANCE;
     }
 
     @Override
@@ -95,5 +97,32 @@ public class ArrayListProductDao implements ProductDao {
             products.removeIf(product -> id.equals(product.getId()));
         }
         writeLock.unlock();
+    }
+
+    @Override
+    public void trySubtractProducts(List<CartItem> items) throws NotEnoughStockException {
+        writeLock.lock();
+        try {
+            for(CartItem cartItem : items) {
+                Product product;
+                try {
+                    product = getProduct(cartItem.getProduct().getId());
+                }
+                catch (NoSuchProductException exception) {
+                    throw new NotEnoughStockException(cartItem.getProduct(), cartItem.getQuantity(), 0);
+                }
+                if(product.getStock() < cartItem.getQuantity()) {
+                    throw new NotEnoughStockException(cartItem.getProduct(), cartItem.getQuantity(), product.getStock());
+                }
+            }
+            items.forEach(cartItem -> {
+                Product product = getProduct(cartItem.getProduct().getId());
+                product.setStock(product.getStock() - cartItem.getQuantity());
+                save(product);
+            });
+        }
+        finally {
+            writeLock.unlock();
+        }
     }
 }

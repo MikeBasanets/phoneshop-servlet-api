@@ -23,10 +23,9 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultCartServiceTest {
-    private static int PRODUCT_QUANTITY = 1;
-    private static BigDecimal PRODUCT_PRICE = new BigDecimal(1);
-    private static List<CartItem> RECENT_PRODUCTS_LIST = new ArrayList<>();
-    private static Long PRODUCT_ID = 1L;
+    private static final int PRODUCT_QUANTITY = 1;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal(1);
+    private static final Long PRODUCT_ID = 1L;
 
     private DefaultCartService defaultCartService;
 
@@ -90,7 +89,7 @@ public class DefaultCartServiceTest {
     }
 
     @Test
-    public void shouldTestDelete() throws NotEnoughStockException {
+    public void shouldTestDelete() {
         List<CartItem> cartItemList = new ArrayList<>();
         cartItemList.add(cartItem);
         when(cart.getItems()).thenReturn(cartItemList);
@@ -102,4 +101,14 @@ public class DefaultCartServiceTest {
         assertTrue(cartItemList.isEmpty());
     }
 
+    @Test
+    public void shouldTestClear() {
+        List<CartItem> cartItemList = new ArrayList<>();
+        cartItemList.add(cartItem);
+        when(cart.getItems()).thenReturn(cartItemList);
+
+        defaultCartService.clear(cart);
+
+        assertTrue(cartItemList.isEmpty());
+    }
 }
