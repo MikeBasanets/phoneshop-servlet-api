@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.product;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -16,10 +18,25 @@ public class ProductSearchEngine {
         List<Product> products = productDao.getProducts();
         products = filterProductsByAvailability(products);
         if(query != null && !query.chars().allMatch(Character::isWhitespace)) {
-            products = filterProductsByQuery(products, query);
+            products = filterProductsByQueryWithAnyMatch(products, query);
             sortResultsByRelevance(products, query);
         }
         sortResultsByUserDefinedOrder(products, sortField, sortOrder);
+        return products;
+    }
+
+    public List<Product> findProducts(String query, SearchQueryType queryType, BigDecimal minPrice, BigDecimal maxPrice) {
+        List<Product> products = productDao.getProducts();
+        if(query != null && !query.chars().allMatch(Character::isWhitespace)) {
+            if(queryType == SearchQueryType.MATCH_ANY_WORDS) {
+                products = filterProductsByQueryWithAnyMatch(products, query);
+                sortResultsByRelevance(products, query);
+            }
+            if(queryType == SearchQueryType.MATCH_ALL_WORDS) {
+                products = filterProductsByQueryWithAllMatchingWords(products, query);
+            }
+        }
+        products = filterProductsByPrice(products, minPrice, maxPrice);
         return products;
     }
 
@@ -33,6 +50,14 @@ public class ProductSearchEngine {
                 .count();
     }
 
+    private boolean allEntriesFound(String text, String keywords) {
+        if(text == null || keywords == null) {
+            return false;
+        }
+        return Arrays.asList(text.trim().toLowerCase().split("\\s+"))
+                .containsAll(Arrays.asList(keywords.trim().toLowerCase().split("\\s+")));
+    }
+
     private List<Product> filterProductsByAvailability(List<Product> products) {
         return products
                 .stream()
@@ -41,10 +66,24 @@ public class ProductSearchEngine {
                 .collect(Collectors.toList());
     }
 
-    private List<Product> filterProductsByQuery(List<Product> products, String query) {
+    private List<Product> filterProductsByPrice(List<Product> products, BigDecimal minPrice, BigDecimal maxPrice) {
+        List<Product> result = new ArrayList<>(products);
+        result.removeIf(product -> (minPrice != null && product.getPrice().compareTo(minPrice) < 0));
+        result.removeIf(product -> (maxPrice != null && product.getPrice().compareTo(maxPrice) > 0));
+        return result;
+    }
+
+    private List<Product> filterProductsByQueryWithAnyMatch(List<Product> products, String query) {
         return products
                 .stream()
                 .filter(product -> countEntries(product.getDescription(), query) > 0)
+                .collect(Collectors.toList());
+    }
+
+    private List<Product> filterProductsByQueryWithAllMatchingWords(List<Product> products, String query) {
+        return products
+                .stream()
+                .filter(product -> allEntriesFound(product.getDescription(), query))
                 .collect(Collectors.toList());
     }
 

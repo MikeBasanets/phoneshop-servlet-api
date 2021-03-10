@@ -20,6 +20,9 @@
     <input name="order" type="hidden" value="${param.order}">
     <button>Search</button>
   </form>
+  <h3>
+    <a href="${pageContext.servletContext.contextPath}/advancedSearch"> Go to advanced search </a>
+  </h3>
   <table>
     <thead>
     <tr>
